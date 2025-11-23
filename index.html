@@ -1,74 +1,155 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="en">  
+<head>  
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BlackForce 007 — Puzzle Game</title>
+  <title>BlackForce 007 — Photo Match Game</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
   <style>
+    :root{
+      --bg: #05050a;
+      --panel: linear-gradient(180deg,#13131d,#0b0c10);
+      --card: #0f1117;
+      --accent: #00ffc6;
+      --muted: #8a8fa3;
+      --glass: rgba(255,255,255,0.03);
+      --highlight: #d7e9ff;
+    }
+
     body{
       margin:0;
-      background:#000;
-      font-family: Arial, sans-serif;
+      background:#05050b;
+      font-family: Inter, sans-serif;
       color:white;
       display:flex;
       justify-content:center;
       padding:10px;
     }
-    .game-container{
-      max-width:420px;
+
+    .app{
       width:100%;
+      max-width:720px;
     }
-    .header{
-      text-align:center;
-      margin-bottom:10px;
-      font-size:22px;
-      font-weight:bold;
+
+    header{
+      background:var(--panel);
+      padding:14px;
+      border-radius:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      border:1px solid rgba(255,255,255,0.05);
+      box-shadow:0 8px 30px rgba(0,0,0,0.6);
     }
-    .board{
+
+    .panel{
+      background:var(--card);
+      padding:12px;
+      margin-top:12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.05);
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    .stats{
       display:grid;
       grid-template-columns:repeat(3,1fr);
-      gap:6px;
-      background:#111;
-      padding:6px;
-      border-radius:10px;
+      gap:8px;
+      margin-bottom:12px;
     }
-    .tile{
-      border:2px solid #222;
-      overflow:hidden;
+
+    .stat{
+      background:rgba(255,255,255,0.04);
+      padding:10px;
       border-radius:8px;
-      cursor:pointer;
+      text-align:center;
     }
+
+    .game-board{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      padding:10px;
+    }
+
+    .tile{
+      height:100px;
+      border-radius:10px;
+      overflow:hidden;
+      position:relative;
+      cursor:pointer;
+      background:#11141d;
+      border:1px solid rgba(255,255,255,.05);
+      transition:transform .15s;
+    }
+
     .tile img{
       width:100%;
       height:100%;
       object-fit:cover;
+      display:none;
     }
-    button{
-      width:100%;
+
+    .tile.revealed img{
+      display:block;
+    }
+
+    .tile.matched{
+      border:2px solid var(--accent);
+      box-shadow:0 0 18px var(--accent);
+      pointer-events:none;
+    }
+
+    .controls{ display:flex; gap:8px; margin-top:12px;}
+    .btn{
+      flex:1;
       padding:10px;
-      border-radius:8px;
-      margin-top:10px;
-      border:none;
-      background:#3e4bff;
+      border-radius:10px;
+      background:linear-gradient(180deg,#242442,#141420);
       color:white;
-      font-size:18px;
+      border:0;
       font-weight:bold;
+      cursor:pointer;
     }
   </style>
 </head>
+
 <body>
+<div class="app">
 
-<div class="game-container">
-  <div class="header">BLACK FORCE 007 — Puzzle</div>
+<header>
+  <img src="https://via.placeholder.com/64" style="width:64px;height:64px;border-radius:10px;">
+  <div>
+    <h1>BLACK FORCE 007</h1>
+    <div>Photo Matching – 12 Tiles – Ready to Play</div>
+  </div>
+</header>
 
-  <div class="board" id="gameBoard"></div>
+<div class="panel">
 
-  <button onclick="startGame()">Start / Shuffle</button>
+  <div class="stats">
+    <div class="stat"><div id="timer">00:00</div><small>Time</small></div>
+    <div class="stat"><div id="moves">0</div><small>Moves</small></div>
+    <div class="stat"><div id="score">0</div><small>Score</small></div>
+  </div>
+
+  <div class="game-board" id="gameBoard"></div>
+
+  <div class="controls">
+    <button class="btn" id="startBtn">Start</button>
+    <button class="btn" id="shuffleBtn">Shuffle</button>
+  </div>
+
+</div>
+
 </div>
 
 <script>
-const PIECES = [
+
+// ==== YOUR 12 IMAGES =====
+const IMAGES = [
   "https://res.cloudinary.com/dajuuabos/image/upload/v1763886424/1763877973843_4_liifha.png",
   "https://res.cloudinary.com/dajuuabos/image/upload/v1763886423/1763877973843_2_smlg1z.png",
   "https://res.cloudinary.com/dajuuabos/image/upload/v1763886423/1763877973843_1_nlqfl5.png",
@@ -83,35 +164,102 @@ const PIECES = [
   "https://res.cloudinary.com/dajuuabos/image/upload/v1763886417/1763877973843_11_ntxwe8.png"
 ];
 
-let current = [...PIECES];
+// Prepare Matching pairs (6 pairs)
+let tiles = [];
+let firstPick = null;
+let lock = false;
+let moves=0, score=0;
+let startTime=0;
+let timerInt=null;
 
-function loadBoard(){
-  const board = document.getElementById("gameBoard");
-  board.innerHTML = "";
-  current.forEach(src => {
+const board = document.getElementById("gameBoard");
+const timerEl = document.getElementById("timer");
+const movesEl = document.getElementById("moves");
+const scoreEl = document.getElementById("score");
+
+// Generate random tile set
+function setupGame(){
+  let arr = IMAGES.slice(0,6); // 6 images
+  arr = [...arr, ...arr]; // make pairs (12 tiles)
+  arr.sort(()=>Math.random()-0.5);
+  tiles = arr;
+  board.innerHTML='';
+
+  tiles.forEach((src, idx)=>{
     const div = document.createElement("div");
-    div.className = "tile";
-    div.innerHTML = `<img src="${src}">`;
+    div.className="tile";
+    div.dataset.index = idx;
+
+    const img = document.createElement("img");
+    img.src = src;
+
+    div.appendChild(img);
+    div.onclick = ()=>reveal(idx, div);
+
     board.appendChild(div);
   });
 }
 
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]] = [arr[j],arr[i]];
+function reveal(index, tile){
+  if(lock) return;
+
+  tile.classList.add("revealed");
+
+  if(firstPick===null){
+    firstPick=index;
+    return;
   }
-  return arr;
+
+  moves++;
+  movesEl.innerText=moves;
+
+  if(tiles[firstPick]===tiles[index] && firstPick!==index){
+    score += 100;
+    document.querySelectorAll(".tile")[index].classList.add("matched");
+    document.querySelectorAll(".tile")[firstPick].classList.add("matched");
+    firstPick=null;
+  }else{
+    lock=true;
+    setTimeout(()=>{
+      document.querySelectorAll(".tile")[index].classList.remove("revealed");
+      document.querySelectorAll(".tile")[firstPick].classList.remove("revealed");
+      firstPick=null;
+      lock=false;
+    },700);
+  }
+
+  scoreEl.innerText = score;
+
+  if(document.querySelectorAll(".matched").length===tiles.length){
+    endGame();
+  }
 }
 
 function startGame(){
-  current = shuffle([...PIECES]);
-  loadBoard();
+  moves=0; score=0;
+  movesEl.innerText=0;
+  scoreEl.innerText=0;
+
+  setupGame();
+  startTime = Date.now();
+  if(timerInt) clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    let sec = Math.floor((Date.now()-startTime)/1000);
+    timerEl.innerText = (sec/60|0).toString().padStart(2,"0") + ":" + (sec%60).toString().padStart(2,"0");
+  },500);
 }
 
-// initial load arranged
-loadBoard();
-</script>
+function endGame(){
+  clearInterval(timerInt);
+  alert("🎉 Puzzle Complete!");
+}
 
+document.getElementById("startBtn").onclick=startGame;
+document.getElementById("shuffleBtn").onclick=startGame;
+
+// Load first time
+setupGame();
+
+</script>
 </body>
 </html>
