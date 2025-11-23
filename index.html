@@ -3,232 +3,71 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BlackForce 007 — Puzzle (Ready-to-Use)</title>
-
-  <!-- Font Awesome for icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <title>BlackForce 007 — Puzzle Game</title>
 
   <style>
-    :root{
-      --bg: #07070b;
-      --panel: linear-gradient(180deg,#0f1116,#0b0c10);
-      --card: #0d1116;
-      --accent: #7b8cff;
-      --muted: #9aa0b4;
-      --glass: rgba(255,255,255,0.03);
-      --highlight: #c7d2ff;
-    }
-    *{box-sizing:border-box}
     body{
       margin:0;
-      min-height:100vh;
-      background: radial-gradient(circle at 10% 10%, #0b0b12 0%, #050507 50%);
-      color:var(--highlight);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      -webkit-font-smoothing:antialiased;
-      padding:12px;
+      background:#000;
+      font-family: Arial, sans-serif;
+      color:white;
       display:flex;
-      align-items:flex-start;
       justify-content:center;
+      padding:10px;
     }
-
-    .app{
+    .game-container{
+      max-width:420px;
       width:100%;
-      max-width:720px;
-      display:grid;
-      grid-template-columns: 1fr 320px;
-      gap:16px;
-      align-items:start;
     }
-
-    @media(max-width:900px){
-      .app{grid-template-columns:1fr}
+    .header{
+      text-align:center;
+      margin-bottom:10px;
+      font-size:22px;
+      font-weight:bold;
     }
-
-    /* Header */
-    header{
-      grid-column:1 / -1;
-      background:var(--panel);
-      padding:14px;
-      border-radius:12px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      border:1px solid rgba(255,255,255,0.03);
-      box-shadow:0 8px 30px rgba(8,8,12,0.6);
-    }
-    .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-    }
-    .brand img{ width:64px; height:64px; object-fit:cover; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.6)}
-    .brand h1{ font-size:20px; margin:0; letter-spacing:1px; color:linear-gradient(90deg,#fff,#aaa); }
-    .subtitle{ color:var(--muted); font-size:13px; margin-top:4px;}
-
-    /* Left column panel */
-    .panel{
-      background:var(--card);
-      padding:12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.03);
-      box-shadow:0 10px 30px rgba(0,0,0,0.6);
-    }
-
-    .stats{
+    .board{
       display:grid;
       grid-template-columns:repeat(3,1fr);
-      gap:8px;
-      margin-bottom:12px;
+      gap:6px;
+      background:#111;
+      padding:6px;
+      border-radius:10px;
     }
-    .stat{
-      background:var(--glass);
+    .tile{
+      border:2px solid #222;
+      overflow:hidden;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    .tile img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    button{
+      width:100%;
       padding:10px;
       border-radius:8px;
-      text-align:center;
-      border:1px solid rgba(255,255,255,0.02);
+      margin-top:10px;
+      border:none;
+      background:#3e4bff;
+      color:white;
+      font-size:18px;
+      font-weight:bold;
     }
-    .stat .val{ font-size:18px; font-weight:700; color:var(--highlight);}
-    .stat .lbl{ font-size:11px; color:var(--muted); margin-top:6px; letter-spacing:0.6px; text-transform:uppercase;}
-
-    /* Game board - 3 columns x 4 rows */
-    .board-wrap{ padding:12px; margin-top:6px; }
-    .game-board{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:8px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-      padding:10px;
-      border-radius:12px;
-      aspect-ratio: 3 / 4;
-      border:1px solid rgba(255,255,255,0.03);
-    }
-
-    .tile{
-      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      border-radius:10px;
-      overflow:hidden;
-      position:relative;
-      min-height:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,0.04);
-      transition: transform .12s ease, box-shadow .12s ease;
-      touch-action: manipulation;
-    }
-    .tile img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-    .tile:active{ transform: scale(.99); }
-    .tile.selected{ box-shadow:0 10px 30px rgba(123,140,255,0.18); outline:3px solid rgba(123,140,255,0.08); transform:translateY(-6px); }
-
-    /* Controls */
-    .controls{ display:flex; gap:8px; margin-top:12px; }
-    .btn{
-      flex:1;
-      padding:10px 12px;
-      border-radius:10px;
-      border:0;
-      font-weight:700;
-      letter-spacing:0.6px;
-      cursor:pointer;
-      background:linear-gradient(180deg,#232338,#111219);
-      color:var(--highlight);
-      box-shadow:0 6px 18px rgba(0,0,0,0.6);
-    }
-    .btn.secondary{ background:linear-gradient(180deg,#1a1a2c,#0b0b12); color:var(--muted); border:1px solid rgba(255,255,255,0.02) }
-
-    /* Right column - leaderboard */
-    .leaderboard{
-      background:var(--card);
-      padding:12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.03);
-      max-height:640px;
-      overflow:auto;
-    }
-    .leaderboard h2{ margin:0 0 8px 0; color:var(--highlight); font-size:16px; text-transform:uppercase; letter-spacing:1px}
-    .leader-list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
-    .leader-item{ display:flex; justify-content:space-between; padding:8px; border-radius:8px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.01) }
-    .leader-rank{ font-weight:800; color:var(--accent); margin-right:8px }
-
-    footer{ grid-column:1/-1; text-align:center; color:var(--muted); margin-top:12px; font-size:12px; }
-
-    /* Responsive */
-    @media(max-width:900px){
-      .app{ padding-bottom:40px; }
-      header{ flex-direction:column; align-items:flex-start; gap:8px }
-    }
-
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <!-- local logo file path (from your upload). Single quotes used so double-quote char in filename is ok -->
-        <img id="brandLogo" src='/mnt/data/A_digital_graphic_design_image_features_the_text_".png' alt="BlackForce Logo">
-        <div>
-          <h1>BLACK FORCE 007</h1>
-          <div class="subtitle">Rearrange the pieces — Mobile friendly • Ready to use</div>
-        </div>
-      </div>
-    </header>
 
-    <!-- Left: Game panel -->
-    <div class="panel">
-      <div class="stats">
-        <div class="stat">
-          <div class="val" id="timer">00:00</div>
-          <div class="lbl">Time</div>
-        </div>
-        <div class="stat">
-          <div class="val" id="moves">0</div>
-          <div class="lbl">Moves</div>
-        </div>
-        <div class="stat">
-          <div class="val" id="score">0</div>
-          <div class="lbl">Score</div>
-        </div>
-      </div>
+<div class="game-container">
+  <div class="header">BLACK FORCE 007 — Puzzle</div>
 
-      <div class="board-wrap">
-        <div class="game-board" id="gameBoard" aria-label="Puzzle board"></div>
-      </div>
+  <div class="board" id="gameBoard"></div>
 
-      <div class="controls">
-        <button class="btn" id="startBtn"><i class="fas fa-play"></i>&nbsp;Start</button>
-        <button class="btn secondary" id="shuffleBtn"><i class="fas fa-random"></i>&nbsp;Shuffle</button>
-      </div>
-    </div>
-
-    <!-- Right: Leaderboard -->
-    <aside class="leaderboard">
-      <h2>Leaderboard</h2>
-      <ul class="leader-list" id="leaderList"></ul>
-      <p style="color:var(--muted); font-size:13px; margin-top:10px">Top results are saved locally (browser storage). Use Save Score on finish.</p>
-    </aside>
-
-    <footer>Built for Black Force 007 — Ready to deploy</footer>
-  </div>
-
-  <!-- Save Score Modal (simple) -->
-  <div id="saveModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:9999;">
-    <div style="background:var(--card); padding:16px; border-radius:12px; width:320px; margin:auto; border:1px solid rgba(255,255,255,0.03);">
-      <h3 style="margin:0 0 8px 0; color:var(--highlight)">Save Your Score</h3>
-      <input id="playerName" placeholder="Your name" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:transparent; color:var(--highlight); margin-bottom:8px" />
-      <div style="display:flex; gap:8px;">
-        <button id="saveScoreBtn" style="flex:1; padding:10px; border-radius:8px; border:0; background:linear-gradient(180deg,#4f5bff,#3540c8); color:white; font-weight:800">Save</button>
-        <button id="cancelSaveBtn" style="flex:1; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:transparent; color:var(--muted)">Cancel</button>
-      </div>
-    </div>
-  </div>
+  <button onclick="startGame()">Start / Shuffle</button>
+</div>
 
 <script>
-/* ========= READY-TO-USE GAME (12 tiles from your Cloudinary) ========= */
-
-// Use your provided Cloudinary image URLs (order can be arbitrary but final solved order assumes this sequence)
 const PIECES = [
   "https://res.cloudinary.com/dajuuabos/image/upload/v1763886424/1763877973843_4_liifha.png",
   "https://res.cloudinary.com/dajuuabos/image/upload/v1763886423/1763877973843_2_smlg1z.png",
@@ -244,249 +83,35 @@ const PIECES = [
   "https://res.cloudinary.com/dajuuabos/image/upload/v1763886417/1763877973843_11_ntxwe8.png"
 ];
 
-// DOM
-const gameBoard = document.getElementById('gameBoard');
-const timerEl = document.getElementById('timer');
-const movesEl = document.getElementById('moves');
-const scoreEl = document.getElementById('score');
-const startBtn = document.getElementById('startBtn');
-const shuffleBtn = document.getElementById('shuffleBtn');
-const leaderList = document.getElementById('leaderList');
+let current = [...PIECES];
 
-const saveModal = document.getElementById('saveModal');
-const saveScoreBtn = document.getElementById('saveScoreBtn');
-const cancelSaveBtn = document.getElementById('cancelSaveBtn');
-const playerNameInput = document.getElementById('playerName');
+function loadBoard(){
+  const board = document.getElementById("gameBoard");
+  board.innerHTML = "";
+  current.forEach(src => {
+    const div = document.createElement("div");
+    div.className = "tile";
+    div.innerHTML = `<img src="${src}">`;
+    board.appendChild(div);
+  });
+}
 
-let state = {
-  order: [],        // correct order indices
-  current: [],      // current order indices
-  selected: null,   // index of selected tile in grid
-  moves: 0,
-  startTs: 0,
-  timerInterval: null,
-  score: 0,
-  playing: false
-};
-
-// UTIL: shuffle array (Fisher-Yates)
-function shuffleArray(a){
-  const arr = a.slice();
-  for(let i = arr.length -1; i>0; i--){
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
     const j = Math.floor(Math.random()*(i+1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [arr[i],arr[j]] = [arr[j],arr[i]];
   }
   return arr;
 }
 
-// Initialize board DOM (12 tiles)
-function buildBoard(){
-  gameBoard.innerHTML = '';
-  // ensure CSS grid uses 3 cols (already set)
-  for(let i=0;i<PIECES.length;i++){
-    const cell = document.createElement('div');
-    cell.className = 'tile';
-    cell.dataset.gridIndex = i; // position in grid
-    // create img
-    const img = document.createElement('img');
-    img.alt = 'tile-'+(i+1);
-    img.loading = 'lazy';
-    img.draggable = false;
-    cell.appendChild(img);
-    // click handler
-    cell.addEventListener('click', () => onTileClick(parseInt(cell.dataset.gridIndex)));
-    gameBoard.appendChild(cell);
-  }
-}
-
-// Render current state (map images to grid positions)
-function render(){
-  const tiles = gameBoard.querySelectorAll('.tile');
-  tiles.forEach((cell, pos) => {
-    const img = cell.querySelector('img');
-    const pieceIndex = state.current[pos];
-    img.src = PIECES[pieceIndex];
-    cell.classList.remove('selected');
-  });
-  movesEl.textContent = state.moves;
-  scoreEl.textContent = state.score;
-}
-
-// Start the game: shuffle and start timer
 function startGame(){
-  state.order = [...Array(PIECES.length).keys()]; // 0..11
-  state.current = shuffleArray(state.order);
-  state.moves = 0;
-  state.score = 0;
-  state.playing = true;
-  state.startTs = Date.now();
-  if(state.timerInterval) clearInterval(state.timerInterval);
-  state.timerInterval = setInterval(() => {
-    const secs = Math.floor((Date.now()-state.startTs)/1000);
-    timerEl.textContent = formatTime(secs);
-  }, 500);
-  render();
+  current = shuffle([...PIECES]);
+  loadBoard();
 }
 
-// Format seconds mm:ss
-function formatTime(s){
-  const m = Math.floor(s/60).toString().padStart(2,'0');
-  const ss = (s%60).toString().padStart(2,'0');
-  return `${m}:${ss}`;
-}
-
-// Shuffle (reshuffle and reset timer)
-function shuffleStart(){
-  startGame();
-}
-
-// Tile click: select or swap
-function onTileClick(gridIndex){
-  if(!state.playing) return;
-  const tiles = document.querySelectorAll('.tile');
-  const cell = tiles[gridIndex];
-  // Select
-  if(state.selected === null){
-    state.selected = gridIndex;
-    cell.classList.add('selected');
-    return;
-  }
-  // If same clicked, deselect
-  if(state.selected === gridIndex){
-    state.selected = null;
-    cell.classList.remove('selected');
-    return;
-  }
-  // Swap the two pieces in current array
-  const a = state.selected;
-  const b = gridIndex;
-  [state.current[a], state.current[b]] = [state.current[b], state.current[a]];
-  // increment moves
-  state.moves++;
-  // score calc: base 1000 + time bonus - move penalty + combo (simple)
-  const elapsed = Math.max(1, Math.floor((Date.now()-state.startTs)/1000));
-  const timeBonus = Math.max(0, 400 - elapsed); // faster more
-  const movePenalty = state.moves * 8;
-  state.score = Math.max(0, 1000 + timeBonus - movePenalty);
-  // clear selection
-  const prevCell = tiles[a];
-  prevCell.classList.remove('selected');
-  state.selected = null;
-  render();
-  // check win
-  if(isSolved()){
-    endGame();
-  }
-}
-
-// Check solved (current order equals correct order: piece index matches grid index)
-function isSolved(){
-  for(let i=0;i<state.current.length;i++){
-    if(state.current[i] !== i) return false;
-  }
-  return true;
-}
-
-// End game: stop timer, compute final score, show modal to save
-function endGame(){
-  state.playing = false;
-  if(state.timerInterval) clearInterval(state.timerInterval);
-  const totalSec = Math.floor((Date.now()-state.startTs)/1000);
-  // final score tweak
-  state.score = Math.max(0, Math.round(state.score + Math.max(0, 400 - totalSec) - state.moves*2));
-  render();
-  // show save modal
-  showSaveModal();
-  // confetti simple effect
-  showConfetti();
-}
-
-// Simple confetti — small colored squares falling
-function showConfetti(){
-  for(let i=0;i<30;i++){
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = Math.random()*100 + 'vw';
-    c.style.top = '-20px';
-    c.style.width = (6 + Math.random()*6) + 'px';
-    c.style.height = c.style.width;
-    c.style.background = `hsl(${Math.random()*60+200},70%,70%)`;
-    document.body.appendChild(c);
-    setTimeout(()=> c.style.opacity = 1,50);
-    setTimeout(()=> c.remove(), 3200);
-  }
-}
-
-// Leaderboard: localStorage based
-function loadLeaderboard(){
-  const raw = localStorage.getItem('bf_leaderboard_v1');
-  if(!raw) return [];
-  try{
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
-  } catch(e){ return []; }
-}
-function saveToLeaderboard(name, score, moves, timeSec){
-  const arr = loadLeaderboard();
-  arr.push({name, score, moves, timeSec, ts: Date.now()});
-  arr.sort((a,b)=> b.score - a.score);
-  // keep top 50
-  const trimmed = arr.slice(0,50);
-  localStorage.setItem('bf_leaderboard_v1', JSON.stringify(trimmed));
-  renderLeaderboard();
-}
-function renderLeaderboard(){
-  const list = loadLeaderboard();
-  leaderList.innerHTML = '';
-  list.slice(0,10).forEach((row, i) => {
-    const li = document.createElement('li');
-    li.className = 'leader-item';
-    li.innerHTML = `<div style="display:flex;align-items:center"><div class="leader-rank">${i+1}</div><div style="min-width:120px">${escapeHtml(row.name)}</div></div><div style="text-align:right"><div style="font-weight:800">${row.score}</div><div style="font-size:12px;color:var(--muted)">${row.moves} moves • ${formatTime(row.timeSec)}</div></div>`;
-    leaderList.appendChild(li);
-  });
-}
-
-// Show leaderboard modal (just toggles right column details)
-function showLeaderboard(){
-  renderLeaderboard();
-  // scroll to leaderboard area
-  document.querySelector('.leaderboard').scrollIntoView({behavior:'smooth'});
-}
-
-// Save modal handlers
-function showSaveModal(){
-  playerNameInput.value = '';
-  saveModal.style.display = 'flex';
-  saveModal.style.alignItems = 'center';
-  saveModal.style.justifyContent = 'center';
-}
-function hideSaveModal(){ saveModal.style.display = 'none'; }
-
-// Save score from modal
-saveScoreBtn.addEventListener('click', () => {
-  const name = (playerNameInput.value || 'Player').trim().slice(0,30);
-  const totalSec = Math.floor((Date.now()-state.startTs)/1000);
-  saveToLeaderboard(name, state.score, state.moves, totalSec);
-  hideSaveModal();
-  alert('Saved! Your score is recorded locally.');
-});
-cancelSaveBtn.addEventListener('click', hideSaveModal);
-
-// Utility escape
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-// Buttons
-startBtn.addEventListener('click', () => startGame());
-shuffleBtn.addEventListener('click', () => shuffleStart());
-
-// Initial load
-buildBoard();
-// Prepare initial state as solved mapping (will shuffle when Start pressed)
-state.order = [...Array(PIECES.length).keys()];
-state.current = state.order.slice();
-render();
-renderLeaderboard();
-
+// initial load arranged
+loadBoard();
 </script>
+
 </body>
 </html>
