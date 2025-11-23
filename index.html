@@ -1,63 +1,899 @@
-<!-- UPDATED: Added 12‑image gallery below puzzle, displayed as 3×4 responsive grid. No other parts changed -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BlackForce 007 — 12-Piece Photo Puzzle</title>
-<style>
-/* --- Gallery Styles Added --- */
-.gallery {
-    margin-top: 20px;
-    background: rgba(255,255,255,0.03);
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-.gallery h2 {
-    text-align: center;
-    color: #c7d2ff;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-}
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-}
-.gallery-grid img {
-    width: 100%;
-    border-radius: 8px;
-    object-fit: cover;
-}
-@media (max-width: 480px) {
-    .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackForce 007 — 12-Piece Photo Puzzle</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07070b;
+            --panel: linear-gradient(180deg, #0f1116, #0b0c10);
+            --card: #0d1116;
+            --accent: #7b8cff;
+            --muted: #9aa0b4;
+            --glass: rgba(255,255,255,0.03);
+            --highlight: #c7d2ff;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #ef4444;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 10%, #0b0b12 0%, #050507 50%);
+            color: var(--highlight);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            padding: 12px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .app {
+            width: 100%;
+            max-width: 720px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+        
+        /* Header */
+        header {
+            background: var(--panel);
+            padding: 14px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 8px 30px rgba(8,8,12,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .brand-logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(145deg, var(--accent), #4f5bff);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(123,140,255,0.4);
+        }
+        
+        .brand-logo i {
+            font-size: 32px;
+            color: white;
+        }
+        
+        .brand h1 {
+            font-size: 20px;
+            margin: 0;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+        }
+        
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        
+        /* Game Panel */
+        .panel {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .stat {
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        
+        .stat .val {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--highlight);
+        }
+        
+        .stat .lbl {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 6px;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+        
+        /* Game Board - 3 columns x 4 rows */
+        .board-wrap {
+            padding: 12px;
+            margin-top: 6px;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+            padding: 10px;
+            border-radius: 12px;
+            aspect-ratio: 3 / 4;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        
+        .tile {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: transform .12s ease, box-shadow .12s ease;
+            touch-action: manipulation;
+        }
+        
+        .tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .tile:active {
+            transform: scale(.98);
+        }
+        
+        .tile.selected {
+            box-shadow: 0 10px 30px rgba(123,140,255,0.18);
+            outline: 3px solid rgba(123,140,255,0.08);
+            transform: translateY(-6px);
+        }
+        
+        .tile.correct {
+            box-shadow: 0 10px 30px rgba(74,222,128,0.18);
+            outline: 3px solid rgba(74,222,128,0.08);
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 0;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            cursor: pointer;
+            background: linear-gradient(180deg, #232338, #111219);
+            color: var(--highlight);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.primary {
+            background: linear-gradient(180deg, #4f5bff, #3540c8);
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(180deg, #1a1a2c, #0b0b12);
+            color: var(--muted);
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        
+        /* Leaderboard */
+        .leaderboard {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            max-height: 400px;
+            overflow: auto;
+        }
+        
+        .leaderboard h2 {
+            margin: 0 0 12px 0;
+            color: var(--highlight);
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        
+        .leader-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.01);
+        }
+        
+        .leader-rank {
+            font-weight: 800;
+            color: var(--accent);
+            margin-right: 8px;
+            width: 24px;
+        }
+        
+        .leader-name {
+            flex: 1;
+        }
+        
+        .leader-score {
+            font-weight: 700;
+            color: var(--highlight);
+        }
+        
+        .leader-details {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        
+        footer {
+            text-align: center;
+            color: var(--muted);
+            margin-top: 12px;
+            font-size: 12px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        
+        .modal h3 {
+            margin: 0 0 16px 0;
+            color: var(--highlight);
+            text-align: center;
+        }
+        
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.05);
+            color: var(--highlight);
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+        
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(123,140,255,0.2);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            opacity: 0;
+            animation: confetti 3s ease-in-out forwards;
+            z-index: 999;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Game Features */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+        
+        .feature {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--muted);
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .game-board {
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                padding: 10px 12px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        @keyframes correctGlow {
+            0% { box-shadow: 0 0 5px rgba(74,222,128,0.5); }
+            50% { box-shadow: 0 0 20px rgba(74,222,128,0.8); }
+            100% { box-shadow: 0 0 5px rgba(74,222,128,0.5); }
+        }
+        
+        .correct-glow {
+            animation: correctGlow 1.5s ease infinite;
+        }
+    </style>
 </head>
 <body>
+    <div class="app">
+        <header>
+            <div class="brand">
+                <div class="brand-logo">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div>
+                    <h1>BLACK FORCE 007</h1>
+                    <div class="subtitle">12-Piece Photo Puzzle • Mobile Friendly</div>
+                </div>
+            </div>
+        </header>
 
-<!-- ORIGINAL CONTENT KEPT AS-IS ABOVE THIS POINT -->
+        <!-- Game Panel -->
+        <div class="panel">
+            <div class="stats">
+                <div class="stat">
+                    <div class="val" id="timer">00:00</div>
+                    <div class="lbl">Time</div>
+                </div>
+                <div class="stat">
+                    <div class="val" id="moves">0</div>
+                    <div class="lbl">Moves</div>
+                </div>
+                <div class="stat">
+                    <div class="val" id="score">0</div>
+                    <div class="lbl">Score</div>
+                </div>
+            </div>
 
-<div class="gallery">
-    <h2>Image Gallery (3×4 Grid)</h2>
-    <div class="gallery-grid">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886424/1763877973843_4_liifha.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886423/1763877973843_2_smlg1z.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886423/1763877973843_1_nlqfl5.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886422/1763877973843_5_hbf2jz.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886421/1763877973843_7_k98t3g.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886420/1763877973843_8_mwgupo.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886419/1763877973843_3_ppsbcm.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_6_wnwaxv.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_9_exg2xg.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_10_alx18m.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_12_i5omfo.png">
-        <img src="https://res.cloudinary.com/dajuuabos/image/upload/v1763886417/1763877973843_11_ntxwe8.png">
+            <div class="board-wrap">
+                <div class="game-board" id="gameBoard"></div>
+            </div>
+
+            <div class="features">
+                <div class="feature">Tap two tiles to swap</div>
+                <div class="feature">Correct pieces glow green</div>
+                <div class="feature">Score based on time & moves</div>
+            </div>
+
+            <div class="controls">
+                <button class="btn primary" id="startBtn">
+                    <i class="fas fa-play"></i> Start Game
+                </button>
+                <button class="btn secondary" id="shuffleBtn">
+                    <i class="fas fa-random"></i> Shuffle
+                </button>
+                <button class="btn secondary" id="leaderboardBtn">
+                    <i class="fas fa-trophy"></i> Scores
+                </button>
+            </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h2>Top Scores</h2>
+            <ul class="leader-list" id="leaderList">
+                <!-- Leaderboard items will be populated by JavaScript -->
+            </ul>
+        </div>
+
+        <footer>
+            Built for Black Force 007 — Ready to Deploy
+        </footer>
     </div>
-</div>
 
+    <!-- Save Score Modal -->
+    <div class="modal" id="saveModal">
+        <div class="modal-content">
+            <h3>Save Your Score</h3>
+            <input type="text" id="playerName" class="modal-input" placeholder="Enter your name" maxlength="20">
+            <div class="modal-buttons">
+                <button class="btn primary" id="saveScoreBtn" style="flex: 2;">
+                    <i class="fas fa-save"></i> Save Score
+                </button>
+                <button class="btn secondary" id="cancelSaveBtn" style="flex: 1;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game images - your 12 Cloudinary photos
+        const PIECES = [
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886424/1763877973843_4_liifha.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886423/1763877973843_2_smlg1z.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886423/1763877973843_1_nlqfl5.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886422/1763877973843_5_hbf2jz.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886421/1763877973843_7_k98t3g.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886420/1763877973843_8_mwgupo.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886419/1763877973843_3_ppsbcm.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_6_wnwaxv.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_9_exg2xg.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_10_alx18m.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886418/1763877973843_12_i5omfo.png",
+            "https://res.cloudinary.com/dajuuabos/image/upload/v1763886417/1763877973843_11_ntxwe8.png"
+        ];
+
+        // DOM elements
+        const gameBoard = document.getElementById('gameBoard');
+        const timerEl = document.getElementById('timer');
+        const movesEl = document.getElementById('moves');
+        const scoreEl = document.getElementById('score');
+        const startBtn = document.getElementById('startBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const leaderboardBtn = document.getElementById('leaderboardBtn');
+        const leaderList = document.getElementById('leaderList');
+        const saveModal = document.getElementById('saveModal');
+        const saveScoreBtn = document.getElementById('saveScoreBtn');
+        const cancelSaveBtn = document.getElementById('cancelSaveBtn');
+        const playerNameInput = document.getElementById('playerName');
+
+        // Game state
+        let state = {
+            order: [],        // correct order indices [0,1,2,3,4,5,6,7,8,9,10,11]
+            current: [],      // current order indices
+            selected: null,   // index of selected tile in grid
+            moves: 0,
+            startTime: 0,
+            timerInterval: null,
+            score: 0,
+            playing: false,
+            correctPieces: [] // indices of correctly placed pieces
+        };
+
+        // Initialize the game
+        function init() {
+            buildBoard();
+            state.order = [...Array(PIECES.length).keys()]; // [0,1,2,3,4,5,6,7,8,9,10,11]
+            state.current = [...state.order];
+            state.correctPieces = [];
+            render();
+            renderLeaderboard();
+            
+            // Event listeners
+            startBtn.addEventListener('click', startGame);
+            shuffleBtn.addEventListener('click', shuffleGame);
+            leaderboardBtn.addEventListener('click', showLeaderboard);
+            saveScoreBtn.addEventListener('click', saveScore);
+            cancelSaveBtn.addEventListener('click', hideSaveModal);
+        }
+
+        // Build the game board with 12 tiles
+        function buildBoard() {
+            gameBoard.innerHTML = '';
+            
+            for (let i = 0; i < PIECES.length; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.dataset.index = i;
+                
+                const img = document.createElement('img');
+                img.alt = `Puzzle piece ${i+1}`;
+                img.draggable = false;
+                
+                tile.appendChild(img);
+                tile.addEventListener('click', () => handleTileClick(i));
+                
+                gameBoard.appendChild(tile);
+            }
+        }
+
+        // Render the current game state
+        function render() {
+            const tiles = gameBoard.querySelectorAll('.tile');
+            
+            tiles.forEach((tile, index) => {
+                const img = tile.querySelector('img');
+                const pieceIndex = state.current[index];
+                
+                // Set image source
+                img.src = PIECES[pieceIndex];
+                
+                // Update tile appearance
+                tile.classList.remove('selected');
+                
+                // Check if this piece is in the correct position
+                if (state.current[index] === state.order[index]) {
+                    tile.classList.add('correct');
+                    if (!state.correctPieces.includes(index)) {
+                        state.correctPieces.push(index);
+                    }
+                } else {
+                    tile.classList.remove('correct');
+                    const correctIndex = state.correctPieces.indexOf(index);
+                    if (correctIndex !== -1) {
+                        state.correctPieces.splice(correctIndex, 1);
+                    }
+                }
+            });
+            
+            // Update stats
+            movesEl.textContent = state.moves;
+            scoreEl.textContent = state.score;
+        }
+
+        // Handle tile click
+        function handleTileClick(index) {
+            if (!state.playing) return;
+            
+            const tile = gameBoard.querySelector(`.tile[data-index="${index}"]`);
+            
+            // If no tile is selected, select this one
+            if (state.selected === null) {
+                state.selected = index;
+                tile.classList.add('selected');
+                return;
+            }
+            
+            // If the same tile is clicked again, deselect it
+            if (state.selected === index) {
+                state.selected = null;
+                tile.classList.remove('selected');
+                return;
+            }
+            
+            // Swap the two selected tiles
+            swapTiles(state.selected, index);
+            
+            // Deselect after swapping
+            gameBoard.querySelector(`.tile[data-index="${state.selected}"]`).classList.remove('selected');
+            state.selected = null;
+            
+            // Update moves and score
+            state.moves++;
+            updateScore();
+            
+            // Check if puzzle is solved
+            if (isSolved()) {
+                endGame();
+            }
+        }
+
+        // Swap two tiles
+        function swapTiles(index1, index2) {
+            [state.current[index1], state.current[index2]] = [state.current[index2], state.current[index1]];
+            render();
+        }
+
+        // Check if puzzle is solved
+        function isSolved() {
+            for (let i = 0; i < state.current.length; i++) {
+                if (state.current[i] !== state.order[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Start the game
+        function startGame() {
+            state.playing = true;
+            state.moves = 0;
+            state.score = 0;
+            state.startTime = Date.now();
+            state.correctPieces = [];
+            
+            // Start timer
+            clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(updateTimer, 1000);
+            
+            // Shuffle tiles
+            shuffleTiles();
+            
+            render();
+        }
+
+        // Shuffle the tiles
+        function shuffleTiles() {
+            do {
+                // Fisher-Yates shuffle
+                for (let i = state.current.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [state.current[i], state.current[j]] = [state.current[j], state.current[i]];
+                }
+            } while (isSolved()); // Ensure puzzle is not already solved
+            
+            render();
+        }
+
+        // Shuffle game (without resetting stats)
+        function shuffleGame() {
+            if (!state.playing) {
+                startGame();
+                return;
+            }
+            
+            shuffleTiles();
+            state.moves = 0;
+            updateScore();
+            render();
+        }
+
+        // Update the timer
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update the score
+        function updateScore() {
+            const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+            const timeBonus = Math.max(0, 300 - elapsed) * 10;
+            const movePenalty = state.moves * 5;
+            const comboBonus = state.correctPieces.length * 5;
+            
+            state.score = Math.max(0, 1000 + timeBonus - movePenalty + comboBonus);
+            scoreEl.textContent = state.score;
+        }
+
+        // End the game
+        function endGame() {
+            state.playing = false;
+            clearInterval(state.timerInterval);
+            
+            // Calculate final score
+            updateScore();
+            
+            // Show celebration
+            createConfetti();
+            
+            // Show save modal after a delay
+            setTimeout(() => {
+                showSaveModal();
+            }, 1500);
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#7b8cff', '#4f5bff', '#c7d2ff', '#4ade80', '#fbbf24'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Show the save score modal
+        function showSaveModal() {
+            saveModal.style.display = 'flex';
+            playerNameInput.focus();
+        }
+
+        // Hide the save score modal
+        function hideSaveModal() {
+            saveModal.style.display = 'none';
+        }
+
+        // Save score to leaderboard
+        function saveScore() {
+            const name = playerNameInput.value.trim() || 'Player';
+            const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+            
+            // Save to localStorage
+            const leaderboard = loadLeaderboard();
+            leaderboard.push({
+                name: name,
+                score: state.score,
+                moves: state.moves,
+                time: elapsed,
+                date: new Date().toISOString()
+            });
+            
+            // Sort by score (descending) and keep top 10
+            leaderboard.sort((a, b) => b.score - a.score);
+            if (leaderboard.length > 10) {
+                leaderboard.splice(10);
+            }
+            
+            localStorage.setItem('blackforce-puzzle-leaderboard', JSON.stringify(leaderboard));
+            
+            hideSaveModal();
+            renderLeaderboard();
+            
+            // Show success message
+            alert(`Score saved! ${name} - ${state.score} points`);
+        }
+
+        // Load leaderboard from localStorage
+        function loadLeaderboard() {
+            const data = localStorage.getItem('blackforce-puzzle-leaderboard');
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Render the leaderboard
+        function renderLeaderboard() {
+            const leaderboard = loadLeaderboard();
+            leaderList.innerHTML = '';
+            
+            if (leaderboard.length === 0) {
+                const item = document.createElement('li');
+                item.className = 'leader-item';
+                item.innerHTML = '<div style="text-align: center; width: 100%; color: var(--muted);">No scores yet</div>';
+                leaderList.appendChild(item);
+                return;
+            }
+            
+            leaderboard.forEach((entry, index) => {
+                const item = document.createElement('li');
+                item.className = 'leader-item';
+                
+                const minutes = Math.floor(entry.time / 60);
+                const seconds = entry.time % 60;
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                item.innerHTML = `
+                    <div>
+                        <span class="leader-rank">${index + 1}</span>
+                        <span class="leader-name">${escapeHtml(entry.name)}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="leader-score">${entry.score}</div>
+                        <div class="leader-details">${entry.moves} moves • ${timeString}</div>
+                    </div>
+                `;
+                
+                leaderList.appendChild(item);
+            });
+        }
+
+        // Show leaderboard (scroll to it)
+        function showLeaderboard() {
+            document.querySelector('.leaderboard').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Utility function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize the game when the page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
