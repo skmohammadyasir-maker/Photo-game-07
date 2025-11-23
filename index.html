@@ -896,32 +896,4 @@
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-    <script type="module">
-  import { writeData, pushData, onData, updateData } from "./database.js";
-
-  // 🔥 Write Static Data
-  writeData("members/user1", {
-    name: "Yasir",
-    coins: 10
-  });
-
-  // 🔥 Auto Push
-  pushData("logs", {
-    action: "User Joined",
-    time: Date.now()
-  });
-
-  // 🔥 Listen Realtime Update
-  onData("members/user1", (data) => {
-    console.log("Live Data:", data);
-    document.body.innerHTML += `<p>Updated Coins: ${data.coins}</p>`;
-  });
-
-  // 🔥 Click to Update
-  document.addEventListener("click", () => {
-    const randomCoins = Math.floor(Math.random() * 100);
-    updateData("members/user1", { coins: randomCoins });
-    console.log("Coins Updated:", randomCoins);
-  });
-</script>
 </html>
