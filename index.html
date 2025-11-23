@@ -444,52 +444,7 @@
 </head>
 <body>
     <!DOCTYPE html>
-<html>
-<head>
-  <title>Firebase Realtime Test</title>
-</head>
-<body style="font-family: sans-serif;">
-
-<h2>🔥 Firebase Live Data</h2>
-<div id="output" style="font-size:22px; font-weight:bold;">Loading...</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-  // 🔥 Your Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBFbfVCHzWS9ZfsI_R7G5L95lIdsaAjqhM",
-    authDomain: "membership-007.firebaseapp.com",
-    databaseURL: "https://membership-007-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "membership-007",
-    storageBucket: "membership-007.firebasestorage.app",
-    messagingSenderId: "260769258496",
-    appId: "1:260769258496:web:948c596e84f14c0c7f4ce5",
-    measurementId: "G-PHW10NPS0B"
-  };
-
-  // 🔹 Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // 🔹 Write Random Value Every Click
-  document.body.addEventListener("click", () => {
-    const randomNumber = Math.floor(Math.random() * 100);
-    set(ref(db, "test/value"), randomNumber);
-    console.log("Data Sent:", randomNumber);
-  });
-
-  // 🔹 Realtime Listener
-  onValue(ref(db, "test/value"), (snapshot) => {
-    const data = snapshot.val();
-    console.log("Live Data:", data);
-    document.getElementById("output").innerText = "Realtime Value: " + data;
-  });
-</script>
-
-</body>
-</html>
+<htm
     <div class="app">
         <header>
             <div class="brand">
