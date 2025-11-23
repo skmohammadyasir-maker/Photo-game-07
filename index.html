@@ -895,5 +895,32 @@
         // Initialize the game when the page loads
         window.addEventListener('DOMContentLoaded', init);
     </script>
+    <script type="module">
+  import { writeData, pushData, onData, updateData } from "./database.js";
+
+  // 🔥 Example: Save User
+  writeData("members/user1", {
+    name: "Yasir",
+    coins: 10
+  });
+
+  // 🔥 Example: Push Auto Entry
+  pushData("logs", {
+    action: "User Joined",
+    time: Date.now()
+  });
+
+  // 🔥 Listen Realtime
+  onData("members/user1", (data) => {
+    console.log("Live Updated:", data);
+  });
+
+  // 🔥 Update Coins
+  document.addEventListener("click", () => {
+    updateData("members/user1", {
+      coins: Math.floor(Math.random() * 100)
+    });
+  });
+    </script>
 </body>
 </html>
