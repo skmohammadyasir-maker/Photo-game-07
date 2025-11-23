@@ -896,5 +896,52 @@
         // Initialize the game when the page loads
         window.addEventListener('DOMContentLoaded', init);
     </script>
+    <!-- ========================= -->
+<!-- 🔥 Firebase RealTime Script -->
+<!-- ========================= -->
+<script type="module">
+  // Imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  // 🔥 Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBFbfVCHzWS9ZfsI_R7G5L95lIdsaAjqhM",
+    authDomain: "membership-007.firebaseapp.com",
+    databaseURL: "https://membership-007-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "membership-007",
+    storageBucket: "membership-007.firebasestorage.app",
+    messagingSenderId: "260769258496",
+    appId: "1:260769258496:web:948c596e84f14c0c7f4ce5",
+    measurementId: "G-PHW10NPS0B"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // First-Time Write
+  set(ref(db, "members/user1"), {
+    name: "Yasir",
+    coins: 10
+  });
+
+  // Realtime Listener — LIVE UPDATE
+  onValue(ref(db, "members/user1"), (snapshot) => {
+    const data = snapshot.val();
+    console.log("LIVE DATA:", data);
+
+    // যদি UI তে দেখাতে চান
+    const el = document.getElementById("coinsDisplay");
+    if (el) el.innerText = "Coins: " + data.coins;
+  });
+
+  // Click করলে Update হবে
+  document.addEventListener("click", () => {
+    update(ref(db, "members/user1"), {
+      coins: Math.floor(Math.random() * 100)
+    });
+  });
+</script>
 </body>
 </html>
