@@ -1,445 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BlackForce 007 — 12-Piece Photo Puzzle</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --bg: #07070b;
-            --panel: linear-gradient(180deg, #0f1116, #0b0c10);
-            --card: #0d1116;
-            --accent: #7b8cff;
-            --muted: #9aa0b4;
-            --glass: rgba(255,255,255,0.03);
-            --highlight: #c7d2ff;
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --danger: #ef4444;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: radial-gradient(circle at 10% 10%, #0b0b12 0%, #050507 50%);
-            color: var(--highlight);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            padding: 12px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-        }
-        
-        .app {
-            width: 100%;
-            max-width: 720px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            align-items: start;
-        }
-        
-        /* Header */
-        header {
-            background: var(--panel);
-            padding: 14px;
-            border-radius: 12px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.03);
-            box-shadow: 0 8px 30px rgba(8,8,12,0.6);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
-        
-        .brand {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        
-        .brand-logo {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(145deg, var(--accent), #4f5bff);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 6px 20px rgba(123,140,255,0.4);
-        }
-        
-        .brand-logo i {
-            font-size: 32px;
-            color: white;
-        }
-        
-        .brand h1 {
-            font-size: 20px;
-            margin: 0;
-            letter-spacing: 1px;
-            background: linear-gradient(90deg, #fff, #aaa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-transform: uppercase;
-        }
-        
-        .subtitle {
-            color: var(--muted);
-            font-size: 13px;
-            margin-top: 4px;
-        }
-        
-        /* Game Panel */
-        .panel {
-            background: var(--card);
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.03);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        
-        .stat {
-            background: var(--glass);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-        
-        .stat .val {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--highlight);
-        }
-        
-        .stat .lbl {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 6px;
-            letter-spacing: 0.6px;
-            text-transform: uppercase;
-        }
-        
-        /* Game Board - 3 columns x 4 rows */
-        .board-wrap {
-            padding: 12px;
-            margin-top: 6px;
-        }
-        
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-            padding: 10px;
-            border-radius: 12px;
-            aspect-ratio: 3 / 4;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-        
-        .tile {
-            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            min-height: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.04);
-            transition: transform .12s ease, box-shadow .12s ease;
-            touch-action: manipulation;
-        }
-        
-        .tile img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .tile:active {
-            transform: scale(.98);
-        }
-        
-        .tile.selected {
-            box-shadow: 0 10px 30px rgba(123,140,255,0.18);
-            outline: 3px solid rgba(123,140,255,0.08);
-            transform: translateY(-6px);
-        }
-        
-        .tile.correct {
-            box-shadow: 0 10px 30px rgba(74,222,128,0.18);
-            outline: 3px solid rgba(74,222,128,0.08);
-        }
-        
-        /* Controls */
-        .controls {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 0;
-            font-weight: 700;
-            letter-spacing: 0.6px;
-            cursor: pointer;
-            background: linear-gradient(180deg, #232338, #111219);
-            color: var(--highlight);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn.primary {
-            background: linear-gradient(180deg, #4f5bff, #3540c8);
-        }
-        
-        .btn.secondary {
-            background: linear-gradient(180deg, #1a1a2c, #0b0b12);
-            color: var(--muted);
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-        
-        /* Leaderboard */
-        .leaderboard {
-            background: var(--card);
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.03);
-            max-height: 400px;
-            overflow: auto;
-        }
-        
-        .leaderboard h2 {
-            margin: 0 0 12px 0;
-            color: var(--highlight);
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-        
-        .leader-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .leader-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.01);
-        }
-        
-        .leader-rank {
-            font-weight: 800;
-            color: var(--accent);
-            margin-right: 8px;
-            width: 24px;
-        }
-        
-        .leader-name {
-            flex: 1;
-        }
-        
-        .leader-score {
-            font-weight: 700;
-            color: var(--highlight);
-        }
-        
-        .leader-details {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 4px;
-        }
-        
-        footer {
-            text-align: center;
-            color: var(--muted);
-            margin-top: 12px;
-            font-size: 12px;
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-        
-        .modal-content {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 400px;
-            border: 1px solid rgba(255,255,255,0.03);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-        
-        .modal h3 {
-            margin: 0 0 16px 0;
-            color: var(--highlight);
-            text-align: center;
-        }
-        
-        .modal-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.03);
-            background: rgba(255,255,255,0.05);
-            color: var(--highlight);
-            margin-bottom: 16px;
-            font-size: 16px;
-        }
-        
-        .modal-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(123,140,255,0.2);
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        
-        /* Confetti */
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: var(--accent);
-            opacity: 0;
-            animation: confetti 3s ease-in-out forwards;
-            z-index: 999;
-        }
-        
-        @keyframes confetti {
-            0% { transform: translateY(0) rotate(0); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-        }
-        
-        /* Game Features */
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 16px;
-            justify-content: center;
-        }
-        
-        .feature {
-            background: rgba(255,255,255,0.05);
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: var(--muted);
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-        
-        /* Responsive */
-        @media (max-width: 480px) {
-            .game-board {
-                gap: 6px;
-                padding: 8px;
-            }
-            
-            .stats {
-                grid-template-columns: 1fr;
-                gap: 6px;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .btn {
-                padding: 10px 12px;
-            }
-        }
-        
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse {
-            animation: pulse 0.5s ease;
-        }
-        
-        @keyframes correctGlow {
-            0% { box-shadow: 0 0 5px rgba(74,222,128,0.5); }
-            50% { box-shadow: 0 0 20px rgba(74,222,128,0.8); }
-            100% { box-shadow: 0 0 5px rgba(74,222,128,0.5); }
-        }
-        
-        .correct-glow {
-            animation: correctGlow 1.5s ease infinite;
-        }
+      /* (আপনার আগের CSS পুরোপুরি এখানে আছে —省略 for brevity in message) */
+      /* Copy the same CSS you already had here. */
+      :root{--bg:#07070b;--panel:linear-gradient(180deg,#0f1116,#0b0c10);--card:#0d1116;--accent:#7b8cff;--muted:#9aa0b4;--glass:rgba(255,255,255,0.03);--highlight:#c7d2ff;--success:#4ade80;--warning:#fbbf24;--danger:#ef4444}*{box-sizing:border-box;margin:0;padding:0}body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 10%,#0b0b12 0%,#050507 50%);color:var(--highlight);font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;-webkit-font-smoothing:antialiased;padding:12px;display:flex;align-items:flex-start;justify-content:center}.app{width:100%;max-width:720px;display:grid;grid-template-columns:1fr;gap:16px;align-items:start}header{background:var(--panel);padding:14px;border-radius:12px;display:flex;gap:12px;align-items:center;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(8,8,12,0.6);position:relative;overflow:hidden}header::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}.brand{display:flex;gap:12px;align-items:center}.brand-logo{width:64px;height:64px;background:linear-gradient(145deg,var(--accent),#4f5bff);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(123,140,255,0.4)}.brand-logo i{font-size:32px;color:white}.brand h1{font-size:20px;margin:0;letter-spacing:1px;background:linear-gradient(90deg,#fff,#aaa);-webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase}.subtitle{color:var(--muted);font-size:13px;margin-top:4px}.panel{background:var(--card);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 30px rgba(0,0,0,0.6)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.stat{background:var(--glass);padding:12px;border-radius:8px;text-align:center;border:1px solid rgba(255,255,255,0.02)}.stat .val{font-size:18px;font-weight:700;color:var(--highlight)}.stat .lbl{font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:0.6px;text-transform:uppercase}.board-wrap{padding:12px;margin-top:6px}.game-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:10px;border-radius:12px;aspect-ratio:3/4;border:1px solid rgba(255,255,255,0.03)}.tile{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border-radius:10px;overflow:hidden;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,0.04);transition:transform .12s ease,box-shadow .12s ease;touch-action:manipulation}.tile img{width:100%;height:100%;object-fit:cover;display:block}.tile:active{transform:scale(.98)}.tile.selected{box-shadow:0 10px 30px rgba(123,140,255,0.18);outline:3px solid rgba(123,140,255,0.08);transform:translateY(-6px)}.tile.correct{box-shadow:0 10px 30px rgba(74,222,128,0.18);outline:3px solid rgba(74,222,128,0.08)}.controls{display:flex;gap:8px;margin-top:16px}.btn{flex:1;padding:12px 16px;border-radius:10px;border:0;font-weight:700;letter-spacing:0.6px;cursor:pointer;background:linear-gradient(180deg,#232338,#111219);color:var(--highlight);box-shadow:0 6px 18px rgba(0,0,0,0.6);transition:all 0.2s ease;display:flex;align-items:center;justify-content:center;gap:8px}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.7)}.btn:active{transform:translateY(0)}.btn.primary{background:linear-gradient(180deg,#4f5bff,#3540c8)}.btn.secondary{background:linear-gradient(180deg,#1a1a2c,#0b0b12);color:var(--muted);border:1px solid rgba(255,255,255,0.02)}.leaderboard{background:var(--card);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);max-height:400px;overflow:auto}.leaderboard h2{margin:0 0 12px 0;color:var(--highlight);font-size:16px;text-transform:uppercase;letter-spacing:1px;text-align:center}.leader-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}.leader-item{display:flex;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.01)}.leader-rank{font-weight:800;color:var(--accent);margin-right:8px;width:24px}.leader-name{flex:1}.leader-score{font-weight:700;color:var(--highlight)}.leader-details{font-size:11px;color:var(--muted);margin-top:4px}footer{text-align:center;color:var(--muted);margin-top:12px;font-size:12px}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:1000;padding:20px}.modal-content{background:var(--card);padding:20px;border-radius:12px;width:100%;max-width:400px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 40px rgba(0,0,0,0.6)}.modal h3{margin:0 0 16px 0;color:var(--highlight);text-align:center}.modal-input{width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.05);color:var(--highlight);margin-bottom:16px;font-size:16px}.modal-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(123,140,255,0.2)}.modal-buttons{display:flex;gap:8px}.confetti{position:fixed;width:10px;height:10px;background:var(--accent);opacity:0;animation:confetti 3s ease-in-out forwards;z-index:999}@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(360deg);opacity:0}}.features{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center}.feature{background:rgba(255,255,255,0.05);padding:8px 12px;border-radius:20px;font-size:12px;color:var(--muted);border:1px solid rgba(255,255,255,0.03)}@media (max-width:480px){.game-board{gap:6px;padding:8px}.stats{grid-template-columns:1fr;gap:6px}.controls{flex-direction:column}.btn{padding:10px 12px}}@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}.pulse{animation:pulse 0.5s ease}@keyframes correctGlow{0%{box-shadow:0 0 5px rgba(74,222,128,0.5)}50%{box-shadow:0 0 20px rgba(74,222,128,0.8)}100%{box-shadow:0 0 5px rgba(74,222,128,0.5)}}.correct-glow{animation:correctGlow 1.5s ease infinite}
     </style>
 </head>
 <body>
@@ -808,43 +377,38 @@
         }
 
         // Save score to leaderboard
-        function saveScore() {
+        async function saveScore() {
             const name = playerNameInput.value.trim() || 'Player';
             const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
             
-            // Save to localStorage
-            const leaderboard = loadLeaderboard();
-            leaderboard.push({
-                name: name,
-                score: state.score,
-                moves: state.moves,
-                time: elapsed,
-                date: new Date().toISOString()
-            });
-            
-            // Sort by score (descending) and keep top 10
-            leaderboard.sort((a, b) => b.score - a.score);
-            if (leaderboard.length > 10) {
-                leaderboard.splice(10);
+            // Save to Firebase (Realtime DB)
+            try {
+                // push new score
+                await pushScoreToFirebase({
+                    name,
+                    score: state.score,
+                    moves: state.moves,
+                    time: elapsed,
+                    date: new Date().toISOString()
+                });
+
+                hideSaveModal();
+                alert(`Score saved to server! ${name} - ${state.score} points`);
+            } catch (err) {
+                console.error("Save failed:", err);
+                alert("Failed to save score. Check console.");
             }
-            
-            localStorage.setItem('blackforce-puzzle-leaderboard', JSON.stringify(leaderboard));
-            
-            hideSaveModal();
-            renderLeaderboard();
-            
-            // Show success message
-            alert(`Score saved! ${name} - ${state.score} points`);
         }
 
-        // Load leaderboard from localStorage
+        // Load leaderboard (local fallback)
         function loadLeaderboard() {
             const data = localStorage.getItem('blackforce-puzzle-leaderboard');
             return data ? JSON.parse(data) : [];
         }
 
-        // Render the leaderboard
+        // Render the leaderboard (local-only fallback)
         function renderLeaderboard() {
+            // If firebase listener populates leaderList, this function will be called initially to show local fallback
             const leaderboard = loadLeaderboard();
             leaderList.innerHTML = '';
             
@@ -896,52 +460,96 @@
         // Initialize the game when the page loads
         window.addEventListener('DOMContentLoaded', init);
     </script>
+
     <!-- ========================= -->
-<!-- 🔥 Firebase RealTime Script -->
-<!-- ========================= -->
-<script type="module">
-  // Imports
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    <!-- 🔥 Firebase RealTime Script -->
+    <!-- ========================= -->
+    <script type="module">
+      // Imports
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getDatabase, ref, set, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  // 🔥 Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBFbfVCHzWS9ZfsI_R7G5L95lIdsaAjqhM",
-    authDomain: "membership-007.firebaseapp.com",
-    databaseURL: "https://membership-007-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "membership-007",
-    storageBucket: "membership-007.firebasestorage.app",
-    messagingSenderId: "260769258496",
-    appId: "1:260769258496:web:948c596e84f14c0c7f4ce5",
-    measurementId: "G-PHW10NPS0B"
-  };
+      // 🔥 Firebase Config (YOU ALREADY PROVIDED)
+      const firebaseConfig = {
+        apiKey: "AIzaSyBFbfVCHzWS9ZfsI_R7G5L95lIdsaAjqhM",
+        authDomain: "membership-007.firebaseapp.com",
+        databaseURL: "https://membership-007-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "membership-007",
+        storageBucket: "membership-007.firebasestorage.app",
+        messagingSenderId: "260769258496",
+        appId: "1:260769258496:web:948c596e84f14c0c7f4ce5",
+        measurementId: "G-PHW10NPS0B"
+      };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
 
-  // First-Time Write
-  set(ref(db, "members/user1"), {
-    name: "Yasir",
-    coins: 10
-  });
+      // Push score to Firebase
+      async function pushScoreToFirebase(scoreObj) {
+        // push under 'scores' node
+        const scoresRef = ref(db, 'scores');
+        const newRef = await push(scoresRef, scoreObj);
+        return newRef.key;
+      }
 
-  // Realtime Listener — LIVE UPDATE
-  onValue(ref(db, "members/user1"), (snapshot) => {
-    const data = snapshot.val();
-    console.log("LIVE DATA:", data);
+      // Listen to top scores (order by score desc) and render live
+      function listenAndRenderScores() {
+        // We will listen to 'scores' node and on every change, read all and sort client-side
+        const scoresRef = ref(db, 'scores');
+        onValue(scoresRef, (snapshot) => {
+          const raw = snapshot.val();
+          const arr = [];
+          if (raw) {
+            Object.keys(raw).forEach(key => {
+              arr.push(Object.assign({ id: key }, raw[key]));
+            });
+          }
 
-    // যদি UI তে দেখাতে চান
-    const el = document.getElementById("coinsDisplay");
-    if (el) el.innerText = "Coins: " + data.coins;
-  });
+          // sort by score desc
+          arr.sort((a,b) => (b.score || 0) - (a.score || 0));
 
-  // Click করলে Update হবে
-  document.addEventListener("click", () => {
-    update(ref(db, "members/user1"), {
-      coins: Math.floor(Math.random() * 100)
-    });
-  });
-</script>
+          // keep top 20
+          const top = arr.slice(0, 20);
+
+          // render
+          const list = document.getElementById('leaderList');
+          list.innerHTML = '';
+          if (top.length === 0) {
+            const item = document.createElement('li');
+            item.className = 'leader-item';
+            item.innerHTML = '<div style="text-align:center;width:100%;color:var(--muted)">No scores yet</div>';
+            list.appendChild(item);
+            return;
+          }
+
+          top.forEach((entry, idx) => {
+            const minutes = Math.floor((entry.time||0) / 60);
+            const seconds = (entry.time||0) % 60;
+            const timeString = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
+            const li = document.createElement('li');
+            li.className = 'leader-item';
+            li.innerHTML = `
+              <div>
+                <span class="leader-rank">${idx+1}</span>
+                <span class="leader-name">${escapeHtml(entry.name || 'Player')}</span>
+              </div>
+              <div style="text-align:right;">
+                <div class="leader-score">${entry.score || 0}</div>
+                <div class="leader-details">${entry.moves || 0} moves • ${timeString}</div>
+              </div>
+            `;
+            list.appendChild(li);
+          });
+        });
+      }
+
+      // Start listening when DOM ready
+      window.addEventListener('DOMContentLoaded', () => {
+        // start Firebase listener for leaderboard
+        listenAndRenderScores();
+      });
+    </script>
 </body>
 </html>
